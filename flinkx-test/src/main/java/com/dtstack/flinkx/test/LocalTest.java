@@ -67,8 +67,6 @@ import com.dtstack.flinkx.odps.writer.OdpsWriter;
 import com.dtstack.flinkx.oracle.reader.OracleReader;
 import com.dtstack.flinkx.oracle.writer.OracleWriter;
 import com.dtstack.flinkx.oraclelogminer.reader.OraclelogminerReader;
-import com.dtstack.flinkx.phoenix5.reader.Phoenix5Reader;
-import com.dtstack.flinkx.phoenix5.writer.Phoenix5Writer;
 import com.dtstack.flinkx.polardb.reader.PolardbReader;
 import com.dtstack.flinkx.polardb.writer.PolardbWriter;
 import com.dtstack.flinkx.postgresql.reader.PostgresqlReader;
@@ -125,7 +123,7 @@ public class LocalTest {
 //        conf.setString("metrics.reporter.promgateway.randomJobNameSuffix","true");
 //        conf.setString("metrics.reporter.promgateway.deleteOnShutdown","true");
 
-        String jobPath = "your json file's absolute path";
+        String jobPath = "D:\\Github\\myrepo\\flinkx\\jobs\\mysql2hive.json";
         JobExecutionResult result = LocalTest.runJob(new File(jobPath), confProperties, null);
         ResultPrintUtil.printResult(result);
         System.exit(0);
@@ -222,7 +220,7 @@ public class LocalTest {
             case PluginNameConstants.EMQX_READER : reader = new EmqxReader(config, env); break;
             case PluginNameConstants.DM_READER : reader = new DmReader(config, env); break;
             case PluginNameConstants.GREENPLUM_READER : reader = new GreenplumReader(config, env); break;
-            case PluginNameConstants.PHOENIX5_READER : reader = new Phoenix5Reader(config, env); break;
+            // case PluginNameConstants.PHOENIX5_READER : reader = new Phoenix5Reader(config, env); break;
             case PluginNameConstants.KINGBASE_READER : reader = new KingbaseReader(config, env); break;
             case PluginNameConstants.ORACLE_LOG_MINER_READER : reader = new OraclelogminerReader(config, env); break;
             default:throw new IllegalArgumentException("Can not find reader by name:" + readerName);
@@ -261,7 +259,7 @@ public class LocalTest {
             case PluginNameConstants.EMQX_WRITER : writer = new EmqxWriter(config); break;
             case PluginNameConstants.DM_WRITER : writer = new DmWriter(config); break;
             case PluginNameConstants.GREENPLUM_WRITER : writer = new GreenplumWriter(config); break;
-            case PluginNameConstants.PHOENIX5_WRITER : writer = new Phoenix5Writer(config); break;
+            // case PluginNameConstants.PHOENIX5_WRITER : writer = new Phoenix5Writer(config); break;
             case PluginNameConstants.KINGBASE_WRITER : writer = new KingbaseWriter(config); break;
             default:throw new IllegalArgumentException("Can not find writer by name:" + writerName);
         }

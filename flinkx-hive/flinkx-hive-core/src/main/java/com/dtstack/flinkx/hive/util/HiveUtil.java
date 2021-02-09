@@ -242,9 +242,18 @@ public class HiveUtil {
             fieldsb.append(") ");
         }
         if (TEXT.name().equalsIgnoreCase(tableInfo.getStore())) {
-            fieldsb.append(" ROW FORMAT DELIMITED FIELDS TERMINATED BY '");
-            fieldsb.append(tableInfo.getDelimiter());
-            fieldsb.append("' LINES TERMINATED BY '\\n' STORED AS TEXTFILE ");
+            // fieldsb.append(" ROW FORMAT DELIMITED FIELDS TERMINATED BY '");
+            // fieldsb.append(tableInfo.getDelimiter());
+            // fieldsb.append("' LINES TERMINATED BY '\\n' STORED AS TEXTFILE ");
+            if (tableInfo.getDelimiter().length() > 1) {
+                fieldsb.append(" ROW FORMAT SERDE 'org.apache.hadoop.hive.contrib.serde2.MultiDelimitSerDe' WITH SERDEPROPERTIES ( 'field.delim' = '");
+                fieldsb.append(tableInfo.getDelimiter());
+                fieldsb.append("' ) STORED AS TEXTFILE");
+            } else {
+                fieldsb.append(" ROW FORMAT DELIMITED FIELDS TERMINATED BY '");
+                fieldsb.append(tableInfo.getDelimiter());
+                fieldsb.append("' LINES TERMINATED BY '\\n' STORED AS TEXTFILE ");
+            }
         } else if(ORC.name().equalsIgnoreCase(tableInfo.getStore())) {
             fieldsb.append(" STORED AS ORC ");
         }else{

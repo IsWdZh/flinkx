@@ -206,4 +206,15 @@
         </plugins>
     </reporting>
 
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>nexus-Release</id>-->
+<!--            <url>http://tools.nexus.cn:8081/repository/nexus-Release/</url>-->
+<!--        </repository>-->
+<!--        <snapshotRepository>-->
+<!--            <id>nexus-Snapshot</id>-->
+<!--            <url>http://tools.nexus.cn:8081/repository/nexus-Snapshot/</url>-->
+<!--        </snapshotRepository>-->
+<!--    </distributionManagement>-->
+
 </project>

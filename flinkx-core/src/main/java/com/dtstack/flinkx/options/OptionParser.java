@@ -98,7 +98,7 @@ public class OptionParser {
             Object value = one.getValue();
             if(value == null){
                 continue;
-            }else if(OPTION_JOB.equalsIgnoreCase(key)){
+            }else if(OPTION_JOB.equalsIgnoreCase(key) && value.toString().endsWith(".json")){
                 File file = new File(value.toString());
                 try (FileInputStream in = new FileInputStream(file)) {
                     byte[] filecontent = new byte[(int) file.length()];

@@ -19,12 +19,11 @@ package com.dtstack.flinkx;
 
 import com.dtstack.flink.api.java.MyLocalStreamEnvironment;
 import com.dtstack.flinkx.classloader.PluginUtil;
-import com.dtstack.flinkx.config.ContentConfig;
-import com.dtstack.flinkx.config.DataTransferConfig;
-import com.dtstack.flinkx.config.RestartConfig;
-import com.dtstack.flinkx.config.SpeedConfig;
-import com.dtstack.flinkx.config.TestConfig;
+import com.dtstack.flinkx.config.*;
 import com.dtstack.flinkx.constants.ConfigConstant;
+import com.dtstack.flinkx.convert.Convert;
+import com.dtstack.flinkx.convert.utils.ResultUtil;
+import com.dtstack.flinkx.convert.utils.TaskExec;
 import com.dtstack.flinkx.options.OptionParser;
 import com.dtstack.flinkx.reader.BaseDataReader;
 import com.dtstack.flinkx.reader.DataReaderFactory;
@@ -51,6 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URLDecoder;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -85,6 +85,19 @@ public class Main {
         // 解析jobPath指定的任务配置文件
         DataTransferConfig config = DataTransferConfig.parse(job);
         speedTest(config);
+
+        //*************************
+        long startTime = System.currentTimeMillis();
+        String mode = options.getMode();
+        Map<String, Object> paramResMap = TaskExec.addExecRecordBeforeExec(confProperties, jobIdString, config);
+        List convertList = (List) paramResMap.get("convertList");
+        List<Integer> indexList = (List<Integer>) paramResMap.get("indexList");
+        List<String> columnList = (List<String>) paramResMap.get("columnList");
+        Map<String, Object> paramMap = (Map<String, Object>) paramResMap.get("paramMap");
+        String sourceTableName = (String) paramResMap.get("sourceTableName");
+        String targetTableName = (String) paramResMap.get("targetTableName");
+        Map dbConnectMap = (Map) paramResMap.get("dbConnectMap");
+        //*************************
 
         if(StringUtils.isNotEmpty(monitor)) {
             config.setMonitorUrls(monitor);
@@ -126,6 +139,9 @@ public class Main {
             dataStream = dataStream.rebalance();
         }
 
+        //转换操作
+        dataStream = Convert.convert(dataStream, convertList, indexList, columnList);
+
         BaseDataWriter dataWriter = DataWriterFactory.getDataWriter(config);
         DataStreamSink<?> dataStreamSink = dataWriter.writeData(dataStream);
         if(speedConfig.getWriterChannel() > 0){
@@ -141,7 +157,13 @@ public class Main {
         JobExecutionResult result = env.execute(jobIdString);
         if(env instanceof MyLocalStreamEnvironment){
             ResultPrintUtil.printResult(result);
+            // 新增：获取任务执行明细
+            ResultUtil.makeTaskDetailMap(result);
         }
+
+        // 修改任务执行记录
+        TaskExec.addExecRecordAfterExec(mode, paramMap, sourceTableName,
+                targetTableName, startTime, dbConnectMap, confProperties);
     }
 
     private static void configRestartStrategy(StreamExecutionEnvironment env, DataTransferConfig config){

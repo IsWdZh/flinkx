@@ -123,7 +123,8 @@ public class LocalTest {
 //        conf.setString("metrics.reporter.promgateway.randomJobNameSuffix","true");
 //        conf.setString("metrics.reporter.promgateway.deleteOnShutdown","true");
 
-        String jobPath = "D:\\Github\\myrepo\\flinkx\\jobs\\mysql2hive.json";
+        // String jobPath = "D:\\Github\\myrepo\\flinkx\\jobs\\mysql2hive.json";
+        String jobPath = "D:\\Github\\myrepo\\flinkx\\jobs\\mysql2hive_upper_lower_convert.json";
         JobExecutionResult result = LocalTest.runJob(new File(jobPath), confProperties, null);
         ResultPrintUtil.printResult(result);
         System.exit(0);
